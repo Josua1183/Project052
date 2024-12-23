@@ -6,10 +6,9 @@ import json
 import requests
 from datetime import datetime, timedelta
 from typing import Optional
+import os
 
-#import asyncio
-
-TOKEN = "MTI2MDYxNTAwNjk2MjMyMzU4Ng.GKIcaQ.GsYPtuP9bDnCHmyfv9li1oL29PzSBOwH2lPgck"
+TOKEN = os.getenv("TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -252,27 +251,14 @@ async def my_five_minute_task():
             helpers = json.load(f)
     except FileNotFoundError:
         helpers = {}
-
-    guild_id = 1248352430366920875 # Deine Guild ID
-    guild = bot.get_guild(guild_id)
-    if guild is None:
-        print(f"Guild mit der ID {guild_id} nicht gefunden.")
-        return  # Beende die Task, wenn die Guild nicht gefunden wird
-
-    role_id = 1314187574708928539
-    role = guild.get_role(role_id)
-    if role is None:
-        print(f"Rolle mit der ID {role_id} nicht gefunden.")
-        return
-
     heute = datetime.now().strftime("%Y-%m-%d")
 
     for person_id, data in list(helpers.items()):  # list() zum sicheren iterieren und löschen
         expiry_date_str = data.get("expiry_date")
         if expiry_date_str and datetime.strptime(expiry_date_str, "%Y-%m-%d").date() <= datetime.strptime(heute, "%Y-%m-%d").date():
             BASE_URL = "https://discord.com/api/v10"
-            TOKEN = "MTI2MDYxNTAwNjk2MjMyMzU4Ng.GKIcaQ.GsYPtuP9bDnCHmyfv9li1oL29PzSBOwH2lPgck"
-            guild_id = "1248352430366920875"
+            TOKEN = os.getenv("TOKEN")
+            guild_id = os.getenv("GUILD_ID")
             role_id = "1314187574708928539"
             url = f"{BASE_URL}/guilds/{guild_id}/members/{person_id}/roles/{role_id}"
             headers = {
